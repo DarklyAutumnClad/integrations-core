@@ -6,13 +6,11 @@ apt-get install -y nfs-common
 # Prepare the mount point.
 mkdir -p /var/nfs-share
 
-# Grab the IP of the nfs-server from Docker.
-# For some reason using the Docker service name (i.e. 'nfs-server') as the domain name won't work.
+# Grab the IP of the NFS server container from Docker.
+# (Required because for some reason using the Docker service name (i.e. 'nfs-server') as the domain name won't work.)
 SERVER_IP=$(docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" nfs-server)
 
-# The /etc/fstab is a special file used by `mount` to automatically mount volumes and make them visible
-# across terminal sessions.
-echo "$SERVER_IP:/nfs-share /var/nfs-share nfs defaults,vers=4,port=2049 0 0" >> /etc/fstab
-
-# NOTE: the `mount` call must be done outside of this script, as a separate start command.
-# Otherwise for some reason the mount is successful but not persisted, and the Agent doesn't see it.
+# Mount the NFS volume.
+# FIXME: it seems like this volume is not persisted in the Agent once this script terminates, and we
+# need to re-execute from outside of `ddev` to make the volume persist. (???)
+mount -v -t nfs -o vers=4,port=2049 $SERVER_IP:/ /var/nfs-share

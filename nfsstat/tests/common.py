@@ -20,7 +20,6 @@ E2E_METADATA = {
         'apt-get update',
         'apt-get install -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y docker.io',
         '/bin/dd-scripts/setup',
-        'mount /var/nfs-share',  # Configured by the setup script.
     ],
     'docker_volumes': ['/var/run/docker.sock:/var/run/docker.sock', '{}:/bin/dd-scripts'.format(SCRIPTS_DIR)],
     'docker_cap_add': ['SYS_ADMIN'],  # Required to be able to `mount` filesystems (eg using NFS).
