@@ -246,6 +246,10 @@ class DockerInterface(object):
             '--network',
             'host',
         ]
+
+        for capacity in self.metadata.get('docker_cap_add', []):
+            command.extend(['--cap-add', capacity.upper()])
+
         for volume in volumes:
             command.extend(['-v', volume])
 

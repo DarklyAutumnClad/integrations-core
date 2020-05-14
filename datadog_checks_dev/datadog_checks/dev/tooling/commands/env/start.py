@@ -14,7 +14,7 @@ from ...e2e.agent import DEFAULT_PYTHON_VERSION, DEFAULT_SAMPLING_COLLECTION_INT
 from ...git import get_current_branch
 from ...testing import complete_envs, get_available_tox_envs, get_tox_env_python_version
 from ...utils import complete_testable_checks, get_tox_file
-from ..console import CONTEXT_SETTINGS, abort, echo_failure, echo_info, echo_success, echo_waiting, echo_warning
+from ..console import CONTEXT_SETTINGS, abort, echo_failure, echo_info, echo_debug, echo_success, echo_waiting, echo_warning
 
 
 @click.command(context_settings=CONTEXT_SETTINGS, short_help='Start an environment')
@@ -230,6 +230,7 @@ def start(ctx, check, env, agent, python, dev, base, env_vars, org_name, profile
         echo_waiting('Running extra start-up commands... ', nl=False)
 
         for command in start_commands:
+            echo_debug('Running command: {}'.format(command))
             result = environment.exec_command(command, capture=True)
             if result.code:
                 click.echo()
@@ -241,6 +242,8 @@ def start(ctx, check, env, agent, python, dev, base, env_vars, org_name, profile
                 environment.stop_agent()
                 environment.remove_config()
                 abort()
+            else:
+                echo_debug(result.stdout)
 
         echo_success('success!')
 
